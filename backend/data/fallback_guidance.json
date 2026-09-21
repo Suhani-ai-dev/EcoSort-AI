@@ -1,0 +1,172 @@
+{
+  "Paper": {
+    "disposal_steps": [
+      "Remove any plastic windows from envelopes",
+      "Flatten cardboard boxes to save space",
+      "Place clean, dry paper in the recycling bin",
+      "Keep paper away from food contamination"
+    ],
+    "sustainability_tips": [
+      "Use both sides of paper before recycling",
+      "Choose recycled-content paper products",
+      "Switch to digital billing to reduce paper waste"
+    ],
+    "facility_type": "Kerbside Recycling or Paper Bank",
+    "recyclable": true,
+    "hazardous": false,
+    "explanation": "Paper and cardboard are among the most recyclable materials — recycling one tonne saves approximately 17 trees and 26,500 litres of water. Ensure paper is dry and free from food grease before placing it in your recycling bin, as contamination can render entire batches unrecyclable."
+  },
+  "Plastic": {
+    "disposal_steps": [
+      "Check the resin code (number inside recycling symbol) on the item",
+      "Rinse containers to remove food residue",
+      "Remove caps and lids if required by your local scheme",
+      "Place accepted plastics in the recycling bin; bag soft plastics separately for supermarket drop-off"
+    ],
+    "sustainability_tips": [
+      "Choose products with minimal or no plastic packaging",
+      "Carry a reusable bag to avoid single-use plastic bags",
+      "Opt for refillable containers where available"
+    ],
+    "facility_type": "Kerbside Recycling (rigid plastics) or Supermarket Soft Plastic Drop-off",
+    "recyclable": true,
+    "hazardous": false,
+    "explanation": "Plastic recycling rates vary by resin type — PET (code 1) and HDPE (code 2) are widely recycled, while PVC and polystyrene are often not accepted kerbside. Recycling plastic saves up to 1.5 kg of CO2e per kilogram compared to landfill, and reduces dependence on virgin fossil-fuel feedstocks."
+  },
+  "Glass": {
+    "disposal_steps": [
+      "Rinse glass bottles and jars to remove food residue",
+      "Remove metal lids (recycle separately)",
+      "Do not mix broken glass with kerbside recycling — wrap in newspaper and label",
+      "Take to a bottle bank or household waste recycling centre"
+    ],
+    "sustainability_tips": [
+      "Buy drinks in refillable glass bottles where available",
+      "Reuse glass jars for food storage before recycling",
+      "Avoid mixing coloured and clear glass if your local scheme requires separation"
+    ],
+    "facility_type": "Bottle Bank or Household Waste Recycling Centre",
+    "recyclable": true,
+    "hazardous": false,
+    "explanation": "Glass is 100% recyclable and can be recycled endlessly without loss of quality or purity. Recycling one glass bottle saves enough energy to power a computer for 25 minutes. Keep glass clean and colour-sorted where required to maximise recycling efficiency."
+  },
+  "Metal": {
+    "disposal_steps": [
+      "Rinse cans to remove food residue",
+      "Squash aluminium cans to save space (optional)",
+      "Leave the lid partially attached or place inside the can",
+      "Place in kerbside recycling or take to a scrap metal facility"
+    ],
+    "sustainability_tips": [
+      "Buy drinks in aluminium cans rather than single-use plastic bottles",
+      "Look for products in steel tins, which are infinitely recyclable",
+      "Collect foil and scrunch into a ball before recycling"
+    ],
+    "facility_type": "Kerbside Recycling or Scrap Metal Dealer",
+    "recyclable": true,
+    "hazardous": false,
+    "explanation": "Aluminium recycling saves up to 95% of the energy needed to produce new aluminium from bauxite ore, while steel recycling saves around 60% of energy. Metal can be recycled indefinitely — every aluminium can you recycle could be back on the shelf as a new can within 60 days."
+  },
+  "Food/Organic": {
+    "disposal_steps": [
+      "Separate food scraps from packaging before disposal",
+      "Place in a food waste caddy for kerbside collection if available",
+      "Compost at home using a compost bin or worm farm",
+      "Do not place food waste in general recycling"
+    ],
+    "sustainability_tips": [
+      "Plan meals to reduce food purchase and waste",
+      "Store food correctly to extend its life",
+      "Compost garden waste and uncooked food scraps at home"
+    ],
+    "facility_type": "Kerbside Food Waste Collection or Home Compost",
+    "recyclable": false,
+    "hazardous": false,
+    "explanation": "Food waste in landfill decomposes anaerobically and generates methane, a greenhouse gas 80 times more potent than CO2 over 20 years. Composting or anaerobic digestion of food waste avoids these emissions and produces valuable compost or biogas, supporting a circular bioeconomy."
+  },
+  "E-Waste": {
+    "disposal_steps": [
+      "Back up and wipe personal data from devices before disposal",
+      "Remove batteries separately for proper battery recycling",
+      "Take to a certified e-waste recycler or retailer take-back scheme",
+      "Never place e-waste in general waste or recycling bins"
+    ],
+    "sustainability_tips": [
+      "Extend device life by repairing rather than replacing",
+      "Donate working devices to charities or refurbishers",
+      "Choose electronics brands with strong take-back programmes"
+    ],
+    "facility_type": "Certified E-Waste Recycler or Retailer Take-Back Scheme",
+    "recyclable": true,
+    "hazardous": true,
+    "explanation": "Electronic waste contains valuable recoverable metals such as gold, silver, and copper, but also hazardous substances including lead, mercury, and cadmium that can leach into soil and water if landfilled. Proper e-waste recycling recovers up to 20 kg CO2e per device and prevents toxic contamination of ecosystems."
+  },
+  "Medical": {
+    "disposal_steps": [
+      "Place sharps (needles, syringes) in a rigid sharps container — never in general waste",
+      "Return unused medicines to a pharmacy for safe disposal",
+      "Place masks and non-sharp medical waste in a sealed bag, then general waste",
+      "Contact your local health authority for guidance on clinical waste"
+    ],
+    "sustainability_tips": [
+      "Only order the medicines you need to reduce waste",
+      "Use washable, reusable masks where appropriate",
+      "Follow your country's national clinical waste guidelines"
+    ],
+    "facility_type": "Pharmacy Take-Back or Clinical Waste Service",
+    "recyclable": false,
+    "hazardous": true,
+    "explanation": "Medical waste — particularly sharps and pharmaceuticals — requires special handling to prevent needle-stick injuries and contamination of water supplies with active pharmaceutical compounds. Never flush medicines down the sink or toilet; return them to a pharmacy which will arrange safe high-temperature incineration."
+  },
+  "Hazardous": {
+    "disposal_steps": [
+      "Keep hazardous items in their original labelled containers",
+      "Never pour chemicals down the drain or into general waste",
+      "Take to a Household Hazardous Waste (HHW) collection event or facility",
+      "Check your local council website for drop-off dates and locations"
+    ],
+    "sustainability_tips": [
+      "Buy only the quantity of hazardous product you need",
+      "Choose water-based paints and solvents over oil-based alternatives",
+      "Share leftover usable materials with community groups or neighbours"
+    ],
+    "facility_type": "Household Hazardous Waste (HHW) Drop-off Facility",
+    "recyclable": false,
+    "hazardous": true,
+    "explanation": "Hazardous household waste such as paints, solvents, and pesticides can contaminate groundwater and harm wildlife if disposed of improperly. Many areas offer free Household Hazardous Waste collection days — a small effort that prevents significant long-term environmental damage and potential human health risks."
+  },
+  "Textile": {
+    "disposal_steps": [
+      "Wash and dry clothing before donating or recycling",
+      "Donate wearable items to charity shops or clothing banks",
+      "Take unwearable textiles to a textile recycling bank or retailer take-back",
+      "Do not place textiles in kerbside recycling"
+    ],
+    "sustainability_tips": [
+      "Buy second-hand clothing to reduce demand for new production",
+      "Choose natural fibre clothing over synthetic to reduce microplastic shedding",
+      "Repair clothing instead of discarding at the first sign of wear"
+    ],
+    "facility_type": "Charity Shop, Clothing Bank, or Retailer Take-Back Scheme",
+    "recyclable": true,
+    "hazardous": false,
+    "explanation": "The fashion industry produces about 10% of global carbon emissions, and extending the life of a garment by just 9 months reduces its carbon, water, and waste footprint by 20–30%. Even worn-out textiles can be recycled into insulation, industrial rags, or new fibres — keep them out of landfill."
+  },
+  "General": {
+    "disposal_steps": [
+      "Check whether the item can be broken down into recyclable components",
+      "If non-recyclable, place in the general waste bin",
+      "Minimise the volume of general waste by compacting where safe",
+      "Contact your local council if unsure about a specific item"
+    ],
+    "sustainability_tips": [
+      "Reduce single-use items to lower general waste generation",
+      "Look for products with recyclable or compostable packaging",
+      "Participate in local waste reduction and upcycling initiatives"
+    ],
+    "facility_type": "General Waste (Residual) Collection",
+    "recyclable": false,
+    "hazardous": false,
+    "explanation": "General or residual waste is material that cannot currently be recycled or composted and goes to landfill or energy-from-waste facilities. Reducing general waste starts with buying less and choosing products designed for recyclability — even small changes in consumption habits can significantly reduce your household waste footprint."
+  }
+}

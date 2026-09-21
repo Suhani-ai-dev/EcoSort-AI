@@ -1,0 +1,53 @@
+﻿# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*.so
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# ML model weights (large files — store separately)
+*.h5
+*.pt
+*.pth
+*.ckpt
+*.keras
+
+# Dataset directories
+backend/data/raw/
+backend/data/train/
+backend/data/val/
+backend/data/test/
+backend/data/processed/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vite
+*.local
