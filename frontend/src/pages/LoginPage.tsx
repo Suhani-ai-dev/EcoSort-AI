@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Leaf } from 'lucide-react';
+import { Leaf, AlertTriangle, Clock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 function isValidEmail(v: string) {
@@ -17,15 +17,89 @@ function Spinner() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Translate raw Supabase error messages into friendly user-facing text
+// ---------------------------------------------------------------------------
+function friendlyError(raw: string): { message: string; isRateLimit: boolean } {
+  const lower = raw.toLowerCase();
+
+  if (
+    lower.includes('rate limit') ||
+    lower.includes('too many requests') ||
+    lower.includes('email rate limit') ||
+    lower.includes('over_email_send_rate_limit') ||
+    lower.includes('for security purposes') ||
+    lower.includes('rate_limit')
+  ) {
+    return {
+      message: 'Too many attempts — please wait a minute before trying again.',
+      isRateLimit: true,
+    };
+  }
+
+  if (lower.includes('invalid login credentials') || lower.includes('invalid credentials')) {
+    return { message: 'Incorrect email or password. Please try again.', isRateLimit: false };
+  }
+
+  if (lower.includes('email not confirmed')) {
+    return {
+      message: 'Please check your inbox and confirm your email address first.',
+      isRateLimit: false,
+    };
+  }
+
+  if (lower.includes('user not found') || lower.includes('no user found')) {
+    return { message: 'No account found with that email. Did you mean to sign up?', isRateLimit: false };
+  }
+
+  return { message: raw, isRateLimit: false };
+}
+
+// ---------------------------------------------------------------------------
+// Error banner — different style for rate limit vs regular error
+// ---------------------------------------------------------------------------
+function ErrorBanner({ message, isRateLimit }: { message: string; isRateLimit: boolean }) {
+  if (isRateLimit) {
+    return (
+      <div
+        role="alert"
+        className="flex items-start gap-3 text-sm bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl px-4 py-3"
+      >
+        <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+        <div>
+          <p className="font-semibold text-amber-700 dark:text-amber-400">Rate limit reached</p>
+          <p className="text-amber-600 dark:text-amber-500 mt-0.5">{message}</p>
+          <p className="text-amber-500 dark:text-amber-600 mt-1 text-xs">
+            Wait ~60 seconds then try again.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      role="alert"
+      className="flex items-start gap-3 text-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3"
+    >
+      <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+      <p className="text-red-600 dark:text-red-400">{message}</p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 export function LoginPage() {
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
+  const [isRateLimit, setIsRateLimit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   function validate() {
     if (!email.trim()) return 'Email is required.';
@@ -34,32 +108,29 @@ export function LoginPage() {
     return '';
   }
 
+  function setError(raw: string) {
+    const { message, isRateLimit: rl } = friendlyError(raw);
+    setFormError(message);
+    setIsRateLimit(rl);
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError('');
+    setIsRateLimit(false);
     const err = validate();
-    if (err) { setFormError(err); return; }
+    if (err) { setFormError(err); setIsRateLimit(false); return; }
     setSubmitting(true);
     try {
       await signIn(email.trim(), password);
       navigate('/scan', { replace: true });
     } catch (ex: unknown) {
-      const msg = ex instanceof Error ? ex.message : 'Failed to sign in. Please try again.';
-      setFormError(msg);
-      toast.error(msg);
+      const raw = ex instanceof Error ? ex.message : 'Failed to sign in. Please try again.';
+      setError(raw);
+      const { isRateLimit: rl } = friendlyError(raw);
+      if (!rl) toast.error(friendlyError(raw).message);
     } finally {
       setSubmitting(false);
-    }
-  }
-
-  async function handleGoogle() {
-    setGoogleLoading(true);
-    try {
-      await signInWithGoogle();
-    } catch (ex: unknown) {
-      const msg = ex instanceof Error ? ex.message : 'Google sign-in failed.';
-      toast.error(msg);
-      setGoogleLoading(false);
     }
   }
 
@@ -71,80 +142,64 @@ export function LoginPage() {
         EcoSort AI
       </Link>
 
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 space-y-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 space-y-5">
         {/* Header */}
         <div className="text-center space-y-1">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Welcome back</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">Sign in to your EcoSort AI account</p>
         </div>
 
-        {/* Google */}
-        <button
-          type="button"
-          onClick={handleGoogle}
-          disabled={googleLoading || submitting}
-          className="w-full flex items-center justify-center gap-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {googleLoading ? <Spinner /> : (
-            <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden>
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-            </svg>
-          )}
-          Continue with Google
-        </button>
-
-        {/* Divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 border-t border-gray-100 dark:border-gray-800" />
-          <span className="text-xs text-gray-400">or continue with email</span>
-          <div className="flex-1 border-t border-gray-100 dark:border-gray-800" />
-        </div>
+        {/* Rate-limit error shown at top */}
+        {formError && isRateLimit && (
+          <ErrorBanner message={formError} isRateLimit={isRateLimit} />
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div className="space-y-1">
-            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email
+            </label>
             <input
               id="login-email"
               type="email"
               autoComplete="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={e => { setEmail(e.target.value); setFormError(''); setIsRateLimit(false); }}
               disabled={submitting}
               placeholder="you@example.com"
               className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-eco-green-500 focus:border-transparent disabled:opacity-60 transition"
             />
           </div>
+
           <div className="space-y-1">
-            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Password
+            </label>
             <input
               id="login-password"
               type="password"
               autoComplete="current-password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={e => { setPassword(e.target.value); setFormError(''); setIsRateLimit(false); }}
               disabled={submitting}
               placeholder="••••••••"
               className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-eco-green-500 focus:border-transparent disabled:opacity-60 transition"
             />
           </div>
 
-          {formError && (
-            <p role="alert" className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-2.5">
-              {formError}
-            </p>
+          {/* Non-rate-limit errors shown inside form */}
+          {formError && !isRateLimit && (
+            <ErrorBanner message={formError} isRateLimit={false} />
           )}
 
           <button
             type="submit"
-            disabled={submitting || googleLoading}
+            disabled={submitting}
             className="w-full bg-eco-green-600 hover:bg-eco-green-700 text-white font-semibold rounded-xl px-4 py-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {submitting && <Spinner />}
-            Sign in
+            {submitting ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
 

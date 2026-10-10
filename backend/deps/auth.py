@@ -12,10 +12,8 @@ Usage:
 """
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from supabase import create_client
-
-from config import settings  # relative import — FastAPI runs from /backend
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from services.supabase_service import get_client
 
 security = HTTPBearer()
 
@@ -35,7 +33,7 @@ async def get_current_user(
     """
     token = credentials.credentials
     try:
-        client = create_client(settings.supabase_url, settings.supabase_service_key)
+        client = get_client()
         response = client.auth.get_user(token)
         if response.user is None:
             raise HTTPException(

@@ -19,7 +19,6 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signOut: () => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
 }
 
 // ---------------------------------------------------------------------------
@@ -76,15 +75,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
 
-    // Insert profile row if the user was created (not a re-confirmation case)
+    // Insert profile row if the user was created (not a re-confirmation case).
+    // Profile insert failure is non-fatal — a duplicate key error happens when
+    // Google OAuth already created the user row, so we silently ignore it.
     if (data.user) {
-      const { error: profileError } = await supabase
+      await supabase
         .from('profiles')
-        .insert({ id: data.user.id, username });
-      // Profile insert failure is non-fatal for the auth flow (the trigger
-      // already created the points row). Surface the error so callers can
-      // show feedback, but don't block sign-up.
-      if (profileError) throw profileError;
+        .insert({ id: data.user.id, username })
+        .then(({ error: profileError }) => {
+          if (profileError && !profileError.message.includes('duplicate')) {
+            console.warn('[AuthContext] Profile insert warning:', profileError.message);
+          }
+        });
     }
   }
 
@@ -96,19 +98,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }
 
-  // -------------------------------------------------------------------------
-  // signInWithGoogle (OAuth redirect flow)
-  // -------------------------------------------------------------------------
-  async function signInWithGoogle(): Promise<void> {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-    });
-    if (error) throw error;
-  }
-
   return (
     <AuthContext.Provider
-      value={{ user, session, loading, signIn, signUp, signOut, signInWithGoogle }}
+      value={{ user, session, loading, signIn, signUp, signOut }}
     >
       {children}
     </AuthContext.Provider>
