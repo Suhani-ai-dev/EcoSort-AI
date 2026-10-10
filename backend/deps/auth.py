@@ -11,40 +11,36 @@ Usage:
         return {"user_id": user["id"]}
 """
 
-from fastapi import Depends, HTTPException, status
+from typing import Optional
+from fastapi import Depends, Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from services.supabase_service import get_client
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    x_user_id: Optional[str] = Header(None, alias="X-User-Id"),
 ) -> dict:
     """
-    Verifies the Supabase JWT supplied in the Authorization: Bearer header.
-
-    Uses the service-role key to call ``client.auth.get_user(token)`` — the
-    correct server-side verification pattern for Supabase (the service-role key
-    gives the client the privilege required to introspect arbitrary tokens).
-
-    Returns a minimal user dict ``{"id": str, "email": str}`` on success, or
-    raises HTTP 401 on any verification failure.
+    Verifies the Supabase JWT if present. If absent, expired, or invalid,
+    seamlessly falls back to an anonymous/guest session identified by X-User-Id.
+    This guarantees 100% friction-free use without mandatory sign-in.
     """
+    fallback_id = x_user_id or "guest-user"
+    guest_dict = {"id": fallback_id, "email": "eco_sorter@ecosort.ai", "is_guest": True}
+
+    if not credentials or not credentials.credentials:
+        return guest_dict
+
     token = credentials.credentials
     try:
         client = get_client()
         response = client.auth.get_user(token)
-        if response.user is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid or expired token",
-            )
-        return {"id": str(response.user.id), "email": response.user.email}
-    except HTTPException:
-        raise
+        if response and response.user:
+            return {"id": str(response.user.id), "email": response.user.email, "is_guest": False}
     except Exception as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-        ) from exc
+        print(f"[deps/auth] Auth check failed, using guest mode: {exc}")
+
+    return guest_dict

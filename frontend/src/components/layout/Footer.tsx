@@ -81,10 +81,10 @@ export function Footer() {
             </p>
             <div className="flex flex-col gap-2">
               <Link
-                to="/signup"
+                to="/scan"
                 className="px-4 py-2 bg-eco-green-600 hover:bg-eco-green-700 text-white text-sm font-semibold rounded-xl text-center transition-colors"
               >
-                Create free account
+                Scan Waste Now
               </Link>
               <a
                 href="https://github.com"

@@ -1,0 +1,37 @@
+services:
+  # EcoSort AI — FastAPI Backend Service
+  - type: web
+    name: ecosort-backend
+    env: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: MODEL_PATH
+        value: ./models/waste_classifier.h5
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+
+  # EcoSort AI — Vite React Frontend Static Site
+  - type: web
+    name: ecosort-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: ecosort-backend
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

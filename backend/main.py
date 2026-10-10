@@ -16,15 +16,9 @@ from routers import classify, guidance, leaderboard, scans
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # --- Startup ---
-    if os.path.exists(settings.model_path):
-        from models import model_loader
-        model_loader.load_model(settings.model_path)
-        print(f"[EcoSort] Model loaded from {settings.model_path}")
-    else:
-        print(
-            f"[EcoSort] WARNING: Model file not found at {settings.model_path}. "
-            "Run training/train.py or scripts/download_model.py first."
-        )
+    from models import model_loader
+    model_loader.load_model(settings.model_path)
+    print(f"[EcoSort] Model ready (custom_weights={model_loader._is_custom_10class})")
     yield
     # --- Shutdown ---
     print("[EcoSort] Shutting down.")
@@ -42,12 +36,20 @@ app = FastAPI(
 )
 
 # ---------------------------------------------------------------------------
-# CORS — allow the Vite dev server
+# CORS — allow frontend dev servers on any local port
 # ---------------------------------------------------------------------------
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -71,6 +73,8 @@ app.include_router(leaderboard.router)
 def health_check() -> dict:
     """Root health-check endpoint."""
     from models import model_loader
+    if not model_loader.is_loaded():
+        model_loader.load_model(settings.model_path)
     return {
         "status": "ok",
         "service": "EcoSort AI API",

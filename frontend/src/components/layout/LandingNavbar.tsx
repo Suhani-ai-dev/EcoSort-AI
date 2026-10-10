@@ -33,16 +33,10 @@ export function LandingNavbar() {
             </button>
 
             <Link
-              to="/login"
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-eco-green-600 dark:hover:text-eco-green-400 transition-colors"
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/signup"
+              to="/scan"
               className="px-5 py-2 bg-eco-green-600 hover:bg-eco-green-700 text-white text-sm font-semibold rounded-xl transition-colors"
             >
-              Get started free
+              Open Scanner
             </Link>
           </div>
 
@@ -70,18 +64,11 @@ export function LandingNavbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 space-y-2">
           <Link
-            to="/login"
-            onClick={() => setMobileOpen(false)}
-            className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/signup"
+            to="/scan"
             onClick={() => setMobileOpen(false)}
             className="block px-3 py-2 rounded-lg text-sm font-semibold bg-eco-green-600 text-white hover:bg-eco-green-700 transition-colors text-center"
           >
-            Get started free
+            Open Scanner
           </Link>
         </div>
       )}

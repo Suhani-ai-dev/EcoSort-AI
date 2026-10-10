@@ -15,7 +15,8 @@ import google.generativeai as genai
 from config import settings
 
 # Initialise Gemini client with API key from settings
-genai.configure(api_key=settings.gemini_api_key)
+if settings.gemini_api_key:
+    genai.configure(api_key=settings.gemini_api_key)
 
 _FALLBACK_PATH = Path(__file__).parent.parent / "data" / "fallback_guidance.json"
 _fallback_data: dict | None = None

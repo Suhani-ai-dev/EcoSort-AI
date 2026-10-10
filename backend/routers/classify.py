@@ -49,12 +49,21 @@ async def classify_waste(file: UploadFile = File(...)) -> ClassifyResponse:
             detail="Classification model not ready",
         )
 
-    category, confidence = model_loader.predict(image_bytes)
+    pred_result = model_loader.predict(image_bytes)
+    if len(pred_result) == 3:
+        category, confidence, sub_category = pred_result
+    else:
+        category, confidence = pred_result
+        sub_category = ""
+
+    if not sub_category:
+        sub_category = DEFAULT_SUB_CATEGORY.get(category, "mixed")
+
     carbon_info = CARBON_MAP[category]
 
     return ClassifyResponse(
         category=category,
-        sub_category=DEFAULT_SUB_CATEGORY[category],
+        sub_category=sub_category,
         confidence=round(confidence, 4),
         carbon_kg=carbon_info["carbon_kg_saved"],
         carbon_source_citation=carbon_info["citation"],

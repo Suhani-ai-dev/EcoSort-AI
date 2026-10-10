@@ -1,13 +1,9 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { PrivateRoute } from './components/auth/PrivateRoute';
 import { Layout } from './components/layout/Layout';
 import { LandingLayout } from './components/layout/LandingLayout';
 import HomePage from './pages/HomePage';
-import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
 import ScanPage from './pages/ScanPage';
 import HistoryPage from './pages/HistoryPage';
 import LeaderboardPage from './pages/LeaderboardPage';
@@ -18,34 +14,33 @@ import NotFoundPage from './pages/NotFoundPage';
 export default function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
-          <Routes>
-            {/* Public marketing home — wrapped in LandingLayout */}
-            <Route element={<LandingLayout />}>
-              <Route path="/" element={<HomePage />} />
-            </Route>
+      <BrowserRouter>
+        <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+        <Routes>
+          {/* Main dashboard entry point */}
+          <Route path="/" element={<Navigate to="/scan" replace />} />
 
-            {/* Public auth routes — no layout wrapper */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+          {/* About / project story landing page */}
+          <Route element={<LandingLayout />}>
+            <Route path="/about" element={<HomePage />} />
+          </Route>
 
-            {/* Protected routes — wrapped in Layout (Navbar + Footer) */}
-            <Route element={<PrivateRoute />}>
-              <Route element={<Layout />}>
-                <Route path="/scan" element={<ScanPage />} />
-                <Route path="/history" element={<HistoryPage />} />
-                <Route path="/leaderboard" element={<LeaderboardPage />} />
-                <Route path="/learn" element={<LearnPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-              </Route>
-            </Route>
+          {/* Core app routes — wrapped in Layout (Navbar + Footer) */}
+          <Route element={<Layout />}>
+            <Route path="/scan" element={<ScanPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/learn" element={<LearnPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
 
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+          {/* Legacy auth redirects directly to scanner */}
+          <Route path="/login" element={<Navigate to="/scan" replace />} />
+          <Route path="/signup" element={<Navigate to="/scan" replace />} />
+
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

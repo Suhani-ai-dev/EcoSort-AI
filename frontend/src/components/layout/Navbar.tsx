@@ -1,41 +1,19 @@
-import { useState, useRef, useEffect } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Leaf, Menu, X, Sun, Moon, ChevronDown, LogOut, User } from 'lucide-react';
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { Leaf, Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
-import { useAuth } from '../../contexts/AuthContext';
 
 const NAV_LINKS = [
   { to: '/scan',        label: 'Scan' },
   { to: '/history',     label: 'History' },
   { to: '/leaderboard', label: 'Leaderboard' },
   { to: '/learn',       label: 'Learn' },
+  { to: '/profile',     label: 'Profile' },
 ];
 
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement>(null);
-
-  // Close user dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
-        setUserMenuOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/login');
-  };
-
-  const userInitial = user?.email?.[0]?.toUpperCase() ?? '?';
 
   return (
     <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-sm border-b border-gray-100 dark:border-gray-800">
@@ -77,56 +55,6 @@ export function Navbar() {
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
 
-            {/* Auth CTAs (desktop, logged out) */}
-            {!user && (
-              <div className="hidden md:flex items-center gap-2">
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-eco-green-600 dark:hover:text-eco-green-400 transition-colors"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/signup"
-                  className="px-4 py-2 bg-eco-green-600 hover:bg-eco-green-700 text-white text-sm font-semibold rounded-xl transition-colors"
-                >
-                  Get started
-                </Link>
-              </div>
-            )}
-
-            {/* User menu (desktop) */}
-            {user && (
-              <div className="relative hidden md:block" ref={userMenuRef}>
-                <button
-                  onClick={() => setUserMenuOpen(v => !v)}
-                  className="flex items-center gap-1.5 focus:outline-none"
-                  aria-label="User menu"
-                >
-                  <span className="w-8 h-8 rounded-full bg-eco-green-600 text-white flex items-center justify-center text-sm font-semibold">
-                    {userInitial}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                </button>
-                {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-1 z-50">
-                    <button
-                      onClick={() => { navigate('/profile'); setUserMenuOpen(false); }}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      <User className="w-4 h-4" /> Profile
-                    </button>
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      <LogOut className="w-4 h-4" /> Sign out
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(v => !v)}
@@ -158,23 +86,6 @@ export function Navbar() {
               {link.label}
             </NavLink>
           ))}
-          {user && (
-            <>
-              <NavLink
-                to="/profile"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                <User className="w-4 h-4" /> Profile
-              </NavLink>
-              <button
-                onClick={() => { setMobileOpen(false); handleSignOut(); }}
-                className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                <LogOut className="w-4 h-4" /> Sign out
-              </button>
-            </>
-          )}
         </div>
       )}
     </nav>

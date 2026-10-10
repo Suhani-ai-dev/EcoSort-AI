@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Trophy, RefreshCw } from 'lucide-react';
 import { getLeaderboard, type LeaderboardEntry } from '../api/leaderboardApi';
 import { LeaderboardRow } from '../components/leaderboard/LeaderboardRow';
-import { useAuth } from '../contexts/AuthContext';
+import { getPersistentUserId } from '../lib/apiClient';
 
 function SkeletonRow() {
   return (
@@ -20,7 +20,7 @@ const REFRESH_INTERVAL = 30_000;
 const PODIUM_MEDALS = ['🥇', '🥈', '🥉'];
 
 export default function LeaderboardPage() {
-  const { user } = useAuth();
+  const currentUserId = getPersistentUserId();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(new Date());
@@ -119,7 +119,7 @@ export default function LeaderboardPage() {
                 <LeaderboardRow
                   key={entry.user_id}
                   entry={entry}
-                  isCurrentUser={user?.id === entry.user_id}
+                  isCurrentUser={entry.user_id === currentUserId || entry.user_id === 'guest-user'}
                 />
               ))}
             </div>

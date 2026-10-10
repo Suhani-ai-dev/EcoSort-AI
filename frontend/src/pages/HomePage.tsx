@@ -164,18 +164,18 @@ export default function HomePage() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2">
             <Link
-              to="/signup"
+              to="/scan"
               className="inline-flex items-center gap-2 px-8 py-4 bg-eco-green-600 hover:bg-eco-green-700 active:bg-eco-green-800 text-white font-bold rounded-2xl text-base transition-colors shadow-md hover:shadow-lg"
             >
               <Camera className="w-5 h-5" />
-              Get started — it's free
+              Launch AI Scanner
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              to="/login"
+              to="/learn"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-2xl text-base hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              Sign in
+              Explore Learn Hub
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -313,18 +313,18 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/signup"
+              to="/scan"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white text-eco-green-700 font-bold rounded-2xl text-base hover:bg-eco-green-50 transition-colors shadow-md"
             >
               <Leaf className="w-5 h-5" />
-              Create free account
+              Start Sorting Waste Now
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              to="/login"
+              to="/leaderboard"
               className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white text-white font-bold rounded-2xl text-base hover:bg-eco-green-700 dark:hover:bg-eco-green-700 transition-colors"
             >
-              Sign in
+              View Leaderboard
             </Link>
           </div>
           <p className="text-eco-green-200 text-sm">

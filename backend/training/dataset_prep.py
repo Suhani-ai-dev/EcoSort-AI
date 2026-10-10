@@ -32,7 +32,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 
 FALLBACK_URL = (
-    "https://storage.googleapis.com/kaggle-data-sets/81794/189368/bundle/archive.zip"
+    "https://huggingface.co/datasets/Qween0fPandora/Garbage_Classification_Original_Dataset/resolve/main/dataset.zip"
 )
 
 KAGGLE_TO_TAXONOMY: dict[str, str] = {
@@ -92,6 +92,9 @@ def download_dataset(raw_dir: Path, zip_path: Path) -> None:
         # --- Method 2: Direct URL ---
         print(f"[dataset_prep] Downloading archive from {FALLBACK_URL} …")
         raw_dir.mkdir(parents=True, exist_ok=True)
+        opener = urllib.request.build_opener()
+        opener.addheaders = [("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")]
+        urllib.request.install_opener(opener)
         urllib.request.urlretrieve(FALLBACK_URL, zip_path, reporthook=_progress_hook)
         print()  # newline after progress bar
 

@@ -1,408 +1,160 @@
 # EcoSort AI 🌿
 
-**AI-Powered Waste Classification and Sustainable Disposal Assistant**
+**Advanced AI-Powered Waste Classification & Sustainable Disposal Platform**
 
-[![CI](https://github.com/YOUR_USERNAME/EcoSort-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/EcoSort-AI/actions/workflows/ci.yml)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/EcoSort-AI&root=frontend)
+[![CI](https://github.com/Suhani-ai-dev/EcoSort-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/Suhani-ai-dev/EcoSort-AI/actions/workflows/ci.yml)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Suhani-ai-dev/EcoSort-AI)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![SDG 12](https://img.shields.io/badge/UN%20SDG-12-16a34a.svg)](https://sdgs.un.org/goals/goal12)
+[![UN SDG 12](https://img.shields.io/badge/UN%20SDG-12-16a34a.svg)](https://sdgs.un.org/goals/goal12)
 
-Built as a final internship project for the *AI for Sustainability* programme, aligned with **SDG 12 — Responsible Consumption and Production**.
+Built for sustainable waste diversion, aligned with **UN SDG 12 — Responsible Consumption and Production**.
 
-Users photograph a waste item; EcoSort AI classifies it with a fine-tuned EfficientNetB0 model, generates structured disposal guidance and a conversational explanation via Google Gemini, quantifies the CO₂ impact using peer-reviewed LCA data, and rewards sustainable habits through gamification.
+Users photograph or upload waste items; EcoSort AI classifies them using an **EfficientNetB0 deep learning vision model**, generates step-by-step circular economy disposal instructions via **Google Gemini**, quantifies diverted emissions with peer-reviewed **EPA WARM v16 LCA carbon models**, and rewards everyday recycling habits with gamified badges and community impact tracking.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-| Feature | Description |
+| Feature | Details |
 |---|---|
-| 📸 AI Waste Scanner | EfficientNetB0 fine-tuned on Kaggle Garbage Classification dataset — 10 waste categories |
-| 🤖 Gemini Guidance | Structured disposal steps + conversational explanation from Google Gemini (model configurable) |
-| 🌍 Carbon Impact | CO₂e savings per item, sourced from WRAP 2020, US EPA WARM v16, IPCC AR6 |
-| 🏆 Gamification | Points per scan (+10 base, +15 E-Waste bonus, +20 Hazardous bonus), milestone badges, leaderboard |
-| 🔐 Authentication | Supabase Auth — email/password + Google OAuth |
-| 🔒 Private Storage | Scan images in a private Supabase Storage bucket; time-limited signed URLs, never public |
-| 📚 Learn Hub | Waste guide, recycling symbols, SDG 12 facts, 22 randomised eco tips |
-| 🌙 Dark Mode | Tailwind CSS class-based, persisted to localStorage |
-| 📱 Mobile-First | Responsive design, camera capture support on mobile |
+| 📸 **Live Webcam & Photo Scanner** | Real-time browser webcam scanner with targeting reticle, file dropzone, and **1-click test samples** (Plastic Bottle, Cardboard, Soda Can, Apple, Smartphone) |
+| ⚡ **Frictionless Zero-Login Access** | Fully runnable without mandatory sign-in. Automatic persistent guest profile with local storage + cloud sync |
+| 🧠 **EfficientNetB0 Deep Learning** | Computer vision model classifying 10 waste categories and 70+ subcategories in under a second |
+| 🤖 **Gemini AI Disposal Guidance** | Real-time localized disposal steps, recycling bin color codes, and circular economy advice |
+| 🌍 **LCA Carbon Impact Metrics** | Peer-reviewed CO₂e savings baselines (US EPA WARM v16, WRAP 2020, IPCC AR6) with real-world equivalents (trees planted, car km offset) |
+| 🏆 **Gamification & Badges** | Milestone badges (*First Scan*, *Eco Starter*, *Green Guardian*, *Waste Warrior*, *Planet Hero*), audio celebratory chimes, and leaderboard |
+| 📜 **Scan History & Export** | Filter past scans by category (Plastic, Paper, Metal, Glass, Organic, E-Waste), and export history as JSON |
+| 🌙 **Adaptive Dark / Light Mode** | Modern emerald eco theme with Tailwind CSS, persisted to local storage |
+| 🚀 **Deploy Ready** | Pre-configured for **Vercel**, **Render**, **Netlify**, and **Docker Compose** |
 
 ---
 
 ## 🏗️ Architecture
 
-```
-React Frontend (Vite + Tailwind)
-        │  REST (JSON + multipart)
-        ▼
-FastAPI Backend (Python 3.11)
-    ├── POST /classify  → EfficientNetB0 model
-    ├── POST /guidance  → Google Gemini API
-    ├── POST /scans     → Supabase Storage + PostgreSQL
-    ├── GET  /scans     → Supabase (signed URLs generated server-side)
-    └── GET  /leaderboard → Supabase PostgreSQL
-        │
-        ├── Supabase PostgreSQL (profiles, scans, points, badges, user_badges)
-        ├── Supabase Storage    (private scan-images bucket)
-        └── Google Gemini API
-```
-
----
-
-## 📁 Repository Structure
-
-```
-EcoSort-AI/
-├── README.md
-├── .gitignore
-├── docker-compose.yml
-├── ecosort-ai-plan.md
-│
-├── frontend/                          # Vite + React 18 + TypeScript + Tailwind CSS 3
-│   ├── index.html
-│   ├── package.json
-│   ├── tailwind.config.ts
-│   ├── vite.config.ts
-│   ├── vercel.json
-│   ├── netlify.toml
-│   ├── .env.example
-│   └── src/
-│       ├── App.tsx
-│       ├── main.tsx
-│       ├── index.css
-│       ├── api/                       # Typed Axios API wrappers
-│       │   ├── classifyApi.ts
-│       │   ├── guidanceApi.ts
-│       │   ├── scansApi.ts
-│       │   ├── leaderboardApi.ts
-│       │   └── profileApi.ts
-│       ├── contexts/
-│       │   ├── AuthContext.tsx
-│       │   └── ThemeContext.tsx
-│       ├── components/
-│       │   ├── auth/PrivateRoute.tsx
-│       │   ├── layout/               # Navbar, Footer, Layout
-│       │   ├── scan/                 # UploadZone, AnalysingLoader, ResultCard
-│       │   ├── history/              # ScanHistoryCard
-│       │   ├── leaderboard/          # LeaderboardRow
-│       │   ├── profile/              # BadgeCard
-│       │   └── learn/                # WasteCategoryCard, RecyclingSymbolGrid, EcoTipCarousel, SDG12Section
-│       ├── data/
-│       │   └── learnContent.ts       # Static educational content
-│       ├── lib/
-│       │   ├── apiClient.ts          # Axios instance with JWT interceptor
-│       │   └── supabaseClient.ts
-│       └── pages/                    # HomePage, ScanPage, HistoryPage, LeaderboardPage, LearnPage, ProfilePage, LoginPage, SignupPage, NotFoundPage
-│
-└── backend/                          # FastAPI + Python 3.11
-    ├── main.py
-    ├── config.py
-    ├── requirements.txt
-    ├── Dockerfile
-    ├── .dockerignore
-    ├── .env.example
-    ├── deps/
-    │   └── auth.py                   # JWT verification dependency
-    ├── routers/
-    │   ├── classify.py               # POST /classify
-    │   ├── guidance.py               # POST /guidance
-    │   ├── scans.py                  # POST /scans, GET /scans
-    │   └── leaderboard.py            # GET /leaderboard
-    ├── schemas/
-    │   ├── classify.py
-    │   ├── guidance.py
-    │   └── scan.py
-    ├── models/
-    │   ├── model_loader.py           # EfficientNetB0 singleton loader
-    │   └── carbon_map.py             # LCA-cited carbon estimates
-    ├── services/
-    │   ├── gemini_service.py         # Gemini API + LRU cache + fallback
-    │   ├── supabase_service.py       # Storage upload, signed URLs, DB ops
-    │   └── points_service.py        # Points calculation + badge logic
-    ├── training/
-    │   ├── dataset_prep.py           # Dataset download + taxonomy remap
-    │   └── train.py                  # Two-phase EfficientNetB0 fine-tuning
-    ├── scripts/
-    │   └── download_model.py         # Pre-trained model download utility
-    ├── data/
-    │   └── fallback_guidance.json    # Static Gemini fallback data
-    └── db/
-        └── migrations/
-            ├── 001_initial_schema.sql
-            └── 002_storage_policies.sql
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                   React + Vite + Tailwind Frontend                     │
+│  • Live Webcam & Upload Zone      • Universal Municipal Bin Guide      │
+│  • Real-Time Audio Chimes         • Profile & Environmental Equivs     │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ REST API
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                        FastAPI Python Backend                          │
+│  • POST /classify   → EfficientNetB0 Vision Model (ImageNet / Custom)  │
+│  • POST /guidance   → Google Gemini Generative AI (with fallback JSON) │
+│  • POST /scans      → Saves scan + awards points (Cloud / In-Memory)   │
+│  • GET  /scans      → Paginated history with ephemeral signed URLs     │
+│  • GET  /leaderboard→ Community rankings and podium leaders            │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+        ┌───────────────────────────┴───────────────────────────┐
+        ▼                                                       ▼
+Google Gemini API                               Supabase Database & Storage
+(Disposal synthesis)                            (PostgreSQL + S3 Storage Bucket)
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Run Locally)
 
-### Prerequisites
-
-- **Node.js** ≥ 18
-- **Python** ≥ 3.11
-- A **Supabase** project (free tier works) — [supabase.com](https://supabase.com)
-- A **Google Gemini API key** — [aistudio.google.com](https://aistudio.google.com)
-- **Kaggle account** (for dataset download, optional if using pre-trained weights)
-
----
-
-### 1. Supabase Setup
-
-1. Create a new Supabase project at [app.supabase.com](https://app.supabase.com)
-2. Go to **SQL Editor** and run the migrations in order:
-   ```sql
-   -- Run: backend/db/migrations/001_initial_schema.sql
-   -- Run: backend/db/migrations/002_storage_policies.sql
-   ```
-3. In **Authentication → Providers**, enable:
-   - Email/Password
-   - Google OAuth (optional — requires Google Cloud credentials)
-4. Copy your **Project URL** and **anon key** (for frontend) and **service-role key** (for backend) from **Settings → API**
-
----
-
-### 2. ML Model
-
-**Option A — Train from scratch (recommended for best accuracy):**
+### 1. Clone the repository
 ```bash
-cd backend
-python -m venv venv && source venv/bin/activate  # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-
-# Download and prepare dataset
-python training/dataset_prep.py --data-dir ./data
-
-# Fine-tune EfficientNetB0 (GPU recommended, ~30 min)
-python training/train.py --data-dir ./data --output-path ./models/waste_classifier.h5
+git clone https://github.com/Suhani-ai-dev/EcoSort-AI.git
+cd EcoSort-AI
 ```
 
-**Option B — Download pre-trained weights:**
+### 2. Run with Docker Compose (Fastest)
 ```bash
-# Set MODEL_DOWNLOAD_URL in your backend/.env, then:
-python scripts/download_model.py --output ./models/waste_classifier.h5
+docker compose up --build
 ```
+- Frontend: `http://localhost:5173`
+- Backend API Docs: `http://localhost:8000/docs`
 
 ---
 
-### 3. Frontend
+### Manual Setup
 
-```bash
-cd frontend
-cp .env.example .env
-# Edit .env — fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_API_BASE_URL
-npm install
-npm run dev
-# → http://localhost:5173
-```
-
----
-
-### 4. Backend
-
+#### Backend Setup (Python 3.11)
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate        # macOS/Linux
-# venv\Scripts\activate         # Windows
+
+# Windows:
+.\venv\Scripts\activate
+# macOS / Linux:
+source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env
-# Edit .env — fill in all variables
 
+# Run integration tests:
+python test_integration.py
+
+# Start FastAPI server:
 uvicorn main:app --reload --port 8000
-# → http://localhost:8000
-# Health check: GET http://localhost:8000/ → {"status":"ok","model_loaded":true}
 ```
+API runs on `http://localhost:8000`.
 
----
-
-### 5. Docker Compose (full stack locally)
-
+#### Frontend Setup (Node.js 20+)
 ```bash
-# Copy both .env files first
-cp frontend/.env.example frontend/.env
-cp backend/.env.example backend/.env
-# Edit both .env files
-
-docker-compose up --build
-# Frontend: http://localhost:5173
-# Backend:  http://localhost:8000
+cd frontend
+npm install
+npm run dev
 ```
+Open `http://localhost:5173` in your browser.
 
 ---
 
-## 🐙 GitHub Setup
+## 🌐 Production Deployment
 
-Push this project to GitHub in three steps:
+### Option 1: Vercel (Frontend)
+1. Push to your GitHub repository.
+2. Go to [Vercel](https://vercel.com) and click **Import Project**.
+3. Set Root Directory to `frontend`.
+4. Add Environment Variable:
+   - `VITE_API_BASE_URL`: URL of your deployed backend (e.g. `https://ecosort-backend.onrender.com`).
+5. Deploy!
 
+### Option 2: Render (Full-Stack 1-Click)
+The repository includes `render.yaml`:
+1. Connect your GitHub repository to [Render](https://render.com).
+2. Create a **Blueprint** using `render.yaml`.
+3. Provide your `GEMINI_API_KEY` in environment settings.
+4. Render will deploy both the FastAPI backend and React frontend automatically.
+
+### Option 3: Netlify (Frontend)
+The repository contains `frontend/netlify.toml`:
+1. Import repository on [Netlify](https://netlify.com).
+2. Base directory: `frontend`.
+3. Build command: `npm run build`.
+4. Publish directory: `dist`.
+
+---
+
+## 🧪 Testing
+
+Run backend integration test suite:
 ```bash
-# 1. Initialise (if not already a git repo)
-git init
-git add .
-git commit -m "feat: initial EcoSort AI commit"
+cd backend
+python test_integration.py
+```
+Tests:
+- [x] Lifespan startup & Health Check (`GET /`)
+- [x] Vision inference model loading (`POST /classify`)
+- [x] Gemini AI disposal guidance generation (`POST /guidance`)
+- [x] Community leaderboard rankings (`GET /leaderboard`)
+- [x] Guest scan persistence & history retrieval (`POST & GET /scans`)
 
-# 2. Create a new repo on github.com (do NOT initialise with README)
-#    Then add the remote:
-git remote add origin https://github.com/YOUR_USERNAME/EcoSort-AI.git
-
-# 3. Push
-git branch -M main
-git push -u origin main
+Run frontend build verification:
+```bash
+cd frontend
+npm run build
 ```
 
-### GitHub Secrets (for CI)
-
-Go to **Settings → Secrets and variables → Actions** and add:
-
-| Secret | Value |
-|---|---|
-| `VITE_SUPABASE_URL` | Your Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key |
-| `VITE_API_BASE_URL` | Your deployed backend URL |
-
-The included `.github/workflows/ci.yml` will automatically type-check and build the frontend on every push to `main`.
-
 ---
 
-## 🌐 Deployment
+## 📜 License & Acknowledgements
 
-### Frontend → Vercel (recommended)
-
-1. Push repository to GitHub
-2. Import project at [vercel.com](https://vercel.com)
-3. Set **Root Directory** to `frontend`
-4. Add environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL` (point to deployed backend)
-5. Deploy — `vercel.json` handles SPA routing automatically
-
-### Frontend → Netlify
-
-1. Set **Base directory** to `frontend`, **Build command** to `npm run build`, **Publish directory** to `frontend/dist`
-2. Add environment variables in Netlify dashboard
-3. `netlify.toml` handles SPA redirects automatically
-
-### Backend → Railway
-
-1. Create a new Railway project, connect GitHub repository
-2. Set **Root Directory** to `backend`
-3. Railway detects the `Dockerfile` automatically
-4. Add all backend environment variables in the Railway dashboard
-5. Deploy — Railway assigns a public URL, use it as `VITE_API_BASE_URL` in the frontend
-
-### Backend → Render
-
-1. Create a new **Web Service** on [render.com](https://render.com)
-2. Connect GitHub, set **Root Directory** to `backend`
-3. **Runtime**: Docker (uses `backend/Dockerfile`)
-4. Add environment variables in the Render dashboard
-
----
-
-## 🔑 Environment Variables
-
-### Frontend (`frontend/.env`)
-
-| Variable | Required | Description |
-|---|---|---|
-| `VITE_SUPABASE_URL` | ✅ | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | ✅ | Supabase anonymous (public) key |
-| `VITE_API_BASE_URL` | ✅ | FastAPI backend base URL (e.g. `http://localhost:8000`) |
-
-### Backend (`backend/.env`)
-
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `SUPABASE_URL` | ✅ | — | Supabase project URL |
-| `SUPABASE_SERVICE_KEY` | ✅ | — | Supabase service-role key (never expose to frontend) |
-| `GEMINI_API_KEY` | ✅ | — | Google Gemini API key |
-| `GEMINI_MODEL` | ❌ | `gemini-1.5-flash` | Gemini model name (e.g. `gemini-1.5-pro`) |
-| `MODEL_PATH` | ❌ | `./models/waste_classifier.h5` | Path to trained EfficientNetB0 weights |
-| `MODEL_DOWNLOAD_URL` | ❌ | — | URL to download pre-trained weights (used by `scripts/download_model.py`) |
-
----
-
-## 📡 API Reference
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `GET` | `/` | — | Health check — returns model_loaded status |
-| `POST` | `/classify` | — | Multipart image → `{category, sub_category, confidence, carbon_kg, carbon_source_citation}` |
-| `POST` | `/guidance` | — | JSON `{category, sub_category}` → structured guidance + explanation |
-| `POST` | `/scans` | JWT | Save scan + image → `{scan, points_earned, points_total, new_badges[]}` |
-| `GET` | `/scans` | JWT | Paginated scan history with signed image URLs |
-| `GET` | `/leaderboard` | — | Top-N users by total points |
-
----
-
-## 🌱 Waste Categories
-
-| # | Category | Recyclable | Hazardous |
-|---|---|---|---|
-| 0 | Paper | ✅ | ❌ |
-| 1 | Plastic | ✅ | ❌ |
-| 2 | Glass | ✅ | ❌ |
-| 3 | Metal | ✅ | ❌ |
-| 4 | Food/Organic | ❌ | ❌ |
-| 5 | E-Waste | ✅ | ✅ |
-| 6 | Medical | ❌ | ✅ |
-| 7 | Hazardous | ❌ | ✅ |
-| 8 | Textile | ✅ | ❌ |
-| 9 | General | ❌ | ❌ |
-
----
-
-## 📊 Carbon Data Sources
-
-Carbon impact estimates are based on peer-reviewed life-cycle assessment (LCA) data:
-
-| Source | Used for |
-|---|---|
-| **US EPA WARM Model v16** (2023) | Paper, Plastic, Glass, Metal, Hazardous, General |
-| **WRAP** (2020) — *Valuing Our Clothes* | Textile, Paper supplementary |
-| **IPCC AR6 WG3** (2022), Chapter 5 | Food/Organic, E-Waste, Medical |
-| **WHO Health-care Waste Guidelines** (2014) | Medical supplementary |
-
----
-
-## 🎮 Gamification
-
-| Action | Points |
-|---|---|
-| Any scan | +10 base |
-| E-Waste scan | +10 base + 15 bonus = **25 pts** |
-| Hazardous scan | +10 base + 20 bonus = **30 pts** |
-
-| Badge | Threshold |
-|---|---|
-| 🌱 Eco Starter | 50 points |
-| 🛡️ Green Guardian | 200 points |
-| ⚔️ Waste Warrior | 500 points |
-| 🌍 Planet Hero | 1000 points |
-
----
-
-## 🛡️ Security
-
-- Scan images stored in a **private** Supabase Storage bucket (`scan-images`)
-- Images accessed only via **time-limited signed URLs** (TTL: 3600 s), generated server-side
-- `image_path` (Storage object key) stored in DB — never a public URL
-- Storage RLS: users can only access objects in their own `{user_id}/` folder
-- All authenticated API endpoints verify the Supabase JWT server-side via the service-role key
-- `SUPABASE_SERVICE_KEY` is backend-only — never sent to or accessible from the frontend
-
----
-
-## 🤝 SDG 12 Alignment
-
-EcoSort AI directly supports **SDG 12: Responsible Consumption and Production** by:
-
-- 🔍 Reducing waste misdirection via AI-powered classification
-- 📊 Quantifying environmental impact with peer-reviewed carbon data
-- 🎓 Building sustainable habits through education (Learn hub)
-- 🏆 Driving behaviour change via gamification
-- 🌍 Scaling impact through community leaderboards
-
----
-
-## 📄 License
-
-MIT — see [LICENSE](LICENSE)
+- **License**: MIT License
+- **Carbon Data**: US EPA WARM v16, WRAP 2020, IPCC AR6
+- **UN SDG Alignment**: [SDG 12 — Responsible Consumption and Production](https://sdgs.un.org/goals/goal12)

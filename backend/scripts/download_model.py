@@ -53,11 +53,17 @@ def _progress_hook(block_num: int, block_size: int, total_size: int) -> None:
 def download_model(url: str, output_path: Path) -> None:
     """Download *url* to *output_path*, creating parent directories as needed."""
     if not url:
-        raise ValueError(
-            "MODEL_DOWNLOAD_URL is not set.\n"
-            "Export it as an environment variable before running this script:\n"
-            "  MODEL_DOWNLOAD_URL=https://... python scripts/download_model.py"
+        print(
+            "[download_model] MODEL_DOWNLOAD_URL is not set.\n"
+            "  EcoSort AI includes built-in zero-config demo classification using\n"
+            "  pre-trained EfficientNetB0 ImageNet weights automatically.\n\n"
+            "  To use a custom trained model:\n"
+            "    1. Set MODEL_DOWNLOAD_URL=<url> and rerun this script, OR\n"
+            "    2. Run training:\n"
+            "       python training/dataset_prep.py\n"
+            "       python training/train.py --output-path ./models/waste_classifier.h5"
         )
+        return
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
